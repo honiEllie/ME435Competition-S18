@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "881430159752",
+    "firebase_url": "https://me435-bf437.firebaseio.com",
+    "project_id": "me435-bf437",
+    "storage_bucket": "me435-bf437.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:881430159752:android:b911b796f0527735",
+        "android_client_info": {
+          "package_name": "edu.rosehulman.honiouej.integratingimagerec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "881430159752-8es81rrjrojlr9r4flu38bki6bq722an.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.rosehulman.honiouej.integratingimagerec",
+            "certificate_hash": "9cafb171e4997ebb60d12d31d936ddeaead85241"
+          }
+        },
+        {
+          "client_id": "881430159752-sl3mafiqmok0ht68a0cuuhst9nl89qfb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl39QCfaGooWSPOI6P1uSS3idkmzCAYFs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "881430159752-sl3mafiqmok0ht68a0cuuhst9nl89qfb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

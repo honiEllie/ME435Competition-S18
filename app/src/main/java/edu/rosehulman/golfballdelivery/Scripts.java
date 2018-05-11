@@ -39,7 +39,10 @@ public class Scripts {
         // TODO implement
         double distanceToNearBall = NavUtils.getDistance(15, 0,90,50);
         long driveTimeMs = (long) (distanceToNearBall / RobotActivity.DEFAULT_SPEED_FT_PER_SEC * 1000);
-        // TODO: Make it shorter! (for testing)
+
+        // for testing
+        driveTimeMs = 3000;
+
         mActivity.sendWheelSpeed(mActivity.mLeftStraightPwmValue, mActivity.mRightStraightPwmValue);
         mCommandHandler.postDelayed(new Runnable() {
             @Override
@@ -59,6 +62,20 @@ public class Scripts {
 
     public void farBallScript() {
         // TODO implement
+        mActivity.sendWheelSpeed(0, 0);
+        Toast.makeText(mActivity, "Figure out which ball(s) to remove and do it.", Toast.LENGTH_SHORT).show();
+        removeBallAtLocation(mActivity.mFarBallLocation);
+        mCommandHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mActivity.mWhiteBallLocation != 0) {
+                    removeBallAtLocation(mActivity.mWhiteBallLocation);
+                }
+                if (mActivity.mState == GolfBallDeliveryActivity.State.FAR_BALL_SCRIPT) {
+                    mActivity.setState(GolfBallDeliveryActivity.State.DRIVE_TOWARDS_HOME);
+                }
+            }
+        }, ARM_REMOVAL_TIME);
     }
 
     public void removeBallAtLocation(final int location) {

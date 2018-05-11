@@ -17,6 +17,7 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import me435.NavUtils;
 import me435.RobotActivity;
 
 public class GolfBallDeliveryActivity extends RobotActivity {
@@ -144,6 +145,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     public int mLeftStraightPwmValue = 255, mRightStraightPwmValue = 255;
 	// ------------------------ End of Driving area ------------------------------
 
+    private Scripts mScripts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +173,7 @@ public class GolfBallDeliveryActivity extends RobotActivity {
             fakeGpsButtonTable.setVisibility(View.GONE);
         }
 
+        mScripts = new Scripts(this);
         setLocationToColor(1, BallColor.RED);
         setLocationToColor(2, BallColor.WHITE);
         setLocationToColor(3, BallColor.BLUE);
@@ -198,13 +201,13 @@ public class GolfBallDeliveryActivity extends RobotActivity {
             case NEAR_BALL_SCRIPT:
                 mGpsInfoTextView.setText("---");
                 mGuessXYTextView.setText("---");
-                //TODO: Run a near ball script that results in removing the ball
+                mScripts.nearBallScript();
                 break;
             case DRIVE_TOWARDS_FAR_BALL:
                 // All actions handled in the loop function
                 break;
             case FAR_BALL_SCRIPT:
-                // TODO: Run a far ball script that results in removing that ball and white (if present).
+                mScripts.farBallScript();
                 break;
             case DRIVE_TOWARDS_HOME:
                 // All actions handled in the loop function
@@ -250,6 +253,51 @@ public class GolfBallDeliveryActivity extends RobotActivity {
     @Override
     public void loop() {
         super.loop();
+
+        mStateTimeTextView.setText("" + getStateTimeMs() / 1000);
+        mGuessXYTextView.setText("(" + (int) mGuessX + ", " + (int) mGuessY + ")");
+
+        long timeRemainingSeconds = MATCH_LENGTH_MS / 1000;
+        if(mState != State.READY_FOR_MISSION){
+            timeRemainingSeconds = (MATCH_LENGTH_MS - getMatchTimeMs()) / 1000;
+            if(getMatchTimeMs() > MATCH_LENGTH_MS){
+                setState(State.READY_FOR_MISSION);
+            }
+        }
+        mMatchTimeTextView.setText(getString(R.string.time_format, timeRemainingSeconds / 60,
+                timeRemainingSeconds % 60));
+
+        switch (mState){
+
+            case READY_FOR_MISSION:
+                break;
+            case NEAR_BALL_SCRIPT:
+                break;
+            case DRIVE_TOWARDS_FAR_BALL:
+                seekTargetAt(FAR_BALL_GPS_X, mFarBallGpsY);
+                break;
+            case FAR_BALL_SCRIPT:
+                break;
+            case DRIVE_TOWARDS_HOME:
+                seekTargetAt(0,0);
+                break;
+            case WAITING_FOR_PICKUP:
+                if(getStateTimeMs() > 8000){
+                    setState(State.SEEKING_HOME);
+                }
+                break;
+            case SEEKING_HOME:
+                // TODO: drive towards 00
+                seekTargetAt(0,0);
+                if(getStateTimeMs() > 8000){
+                    setState(State.WAITING_FOR_PICKUP);
+                }
+                break;
+        }
+    }
+
+    private void seekTargetAt(double x, double y){
+        sendWheelSpeed((int)x , (int)y);
     }
 
 
@@ -280,6 +328,19 @@ public class GolfBallDeliveryActivity extends RobotActivity {
         }
         gpsInfo += "    " + mGpsCounter;
         mGpsInfoTextView.setText(gpsInfo);
+
+        if(mState == State.DRIVE_TOWARDS_FAR_BALL){
+            double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, FAR_BALL_GPS_X, mFarBallGpsY);
+            if(distanceFromTarget < ACCEPTED_DISTANCE_AWAY_FT){
+                setState(State.FAR_BALL_SCRIPT);
+            }
+        }
+        if(mState == State.DRIVE_TOWARDS_HOME){
+            double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY, FAR_BALL_GPS_X, mFarBallGpsY);
+            if(distanceFromTarget < ACCEPTED_DISTANCE_AWAY_FT){
+                setState(State.WAITING_FOR_PICKUP);
+            }
+        }
     }
 
     @Override
@@ -421,7 +482,8 @@ public class GolfBallDeliveryActivity extends RobotActivity {
             public void onClick(View v) {
                 mLeftStraightPwmValue = leftDutyCyclePicker.getValue();
                 mRightStraightPwmValue = rightDutyCyclePicker.getValue();
-                Toast.makeText(GolfBallDeliveryActivity.this, "TODO: Implement the drive straight test", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(GolfBallDeliveryActivity.this, "TODO: Implement the drive straight test", Toast.LENGTH_SHORT).show();
+                mScripts.testStraightScript();
             }
         });
         alert = builder.create();
