@@ -64,7 +64,8 @@ public class Scripts {
         mCommandHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-//                removeBallAtLocation(mActivity.mNearBallLocation);
+                Toast.makeText(mActivity, "Remove Ball.", Toast.LENGTH_SHORT).show();
+                removeBallAtLocation(mActivity.mNearBallLocation);
             }
         }, driveTimeToNearBallMs);
         mCommandHandler.postDelayed(new Runnable() {
@@ -87,6 +88,7 @@ public class Scripts {
             @Override
             public void run() {
                 if (mActivity.mWhiteBallLocation != 0) {
+                    Toast.makeText(mActivity, "Remove White Ball.", Toast.LENGTH_SHORT).show();
                     removeBallAtLocation(mActivity.mWhiteBallLocation);
                 }
                 if (mActivity.mState == GolfBallDeliveryActivity.State.FAR_BALL_SCRIPT) {
@@ -98,6 +100,7 @@ public class Scripts {
 
 
     public void removal1Script(){
+        Toast.makeText(mActivity, "Remove Ball from 1.", Toast.LENGTH_SHORT).show();
         mActivity.sendCommand("POSITION 17 126 -90 -158 106");
         mCommandHandler.postDelayed(new Runnable() {
             @Override
@@ -116,6 +119,7 @@ public class Scripts {
     }
 
     public void removal2Script(){
+        Toast.makeText(mActivity, "Remove Ball from 2.", Toast.LENGTH_SHORT).show();
         mActivity.sendCommand("POSITION -8 90 -90 -111 170");
         mCommandHandler.postDelayed(new Runnable() {
             @Override
@@ -133,6 +137,7 @@ public class Scripts {
     }
 
     public void removal3Script(){
+        Toast.makeText(mActivity, "Remove Ball from 3.", Toast.LENGTH_SHORT).show();
         mActivity.sendCommand("POSITION -70 126 -90 -161 96");
         mCommandHandler.postDelayed(new Runnable() {
             @Override

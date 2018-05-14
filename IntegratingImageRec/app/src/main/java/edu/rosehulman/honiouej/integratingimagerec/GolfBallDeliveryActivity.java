@@ -103,7 +103,6 @@ public class GolfBallDeliveryActivity extends ImageRecActivity {
     /** Constants for the known locations. */
     public static final long NEAR_BALL_GPS_X = 90;
     public static final long FAR_BALL_GPS_X = 240;
-    int ACCEPTABLE_DISTANCE_AWAY_FT;
 
 
     /** Variables that will be either 50 or -50 depending on the balls we get. */
@@ -199,20 +198,26 @@ public class GolfBallDeliveryActivity extends ImageRecActivity {
                 // turn right some
             }
             if(mConeSize > 0.1){
-                //stop, very near cone
+                setState(State.FAR_BALL_SCRIPT);
             }
         }
         else {
-
+            mJumbotronLinearLayout.setBackgroundColor(Color.LTGRAY);
         }
 
 
         switch (mState) {
             case DRIVE_TOWARDS_FAR_BALL:
                 seekTargetAt(FAR_BALL_GPS_X, mFarBallGpsY);
+                if (getStateTimeMs() > 6000){
+                    setState(State.FAR_BALL_SCRIPT);
+                }
                 break;
             case DRIVE_TOWARDS_HOME:
                 seekTargetAt(0, 0);
+                if (getStateTimeMs() > 6000){
+                    setState(State.WAITING_FOR_PICKUP);
+                }
                 break;
             case WAITING_FOR_PICKUP:
                 if (getStateTimeMs() > 8000) {
@@ -354,13 +359,13 @@ public class GolfBallDeliveryActivity extends ImageRecActivity {
         if (mState == State.DRIVE_TOWARDS_FAR_BALL) {
             double distanceFromTarget = NavUtils.getDistance(mCurrentGpsX, mCurrentGpsY,
                     FAR_BALL_GPS_X, mFarBallGpsY);
-            if (distanceFromTarget < ACCEPTABLE_DISTANCE_AWAY_FT) {
+            if (distanceFromTarget < ACCEPTED_DISTANCE_AWAY_FT) {
                 setState(State.FAR_BALL_SCRIPT);
             }
         }
         if (mState == State.DRIVE_TOWARDS_HOME) {
             // Shorter to write since the RobotActivity already calculates the distance to 0, 0.
-            if (mCurrentGpsDistance < ACCEPTABLE_DISTANCE_AWAY_FT) {
+            if (mCurrentGpsDistance < ACCEPTED_DISTANCE_AWAY_FT) {
                 setState(State.WAITING_FOR_PICKUP);
             }
         }
@@ -484,9 +489,10 @@ public class GolfBallDeliveryActivity extends ImageRecActivity {
             case NEAR_BALL_SCRIPT:
                 mGpsInfoTextView.setText("---"); // Clear GPS display (optional)
                 mGuessXYTextView.setText("---"); // Clear guess display (optional)
+                mScripts.initialStraight();
                 mScripts.nearBallScript();
 
-                mViewFlipper.setDisplayedChild(2);
+//                mViewFlipper.setDisplayedChild(2);
 
 //                ViewFlipper localFlipper = (ViewFlipper)findViewById(R.id.my_view_flipper);
 //                localFlipper.setDisplayedChild(2);
@@ -776,7 +782,7 @@ public class GolfBallDeliveryActivity extends ImageRecActivity {
             mGoOrMissionCompleteButton.setBackgroundResource(R.drawable.red_button);
             mGoOrMissionCompleteButton.setText("Mission Complete!");
             setState(State.NEAR_BALL_SCRIPT);
-        } else {
+        } else{
             setState(State.READY_FOR_MISSION);
         }
     }
